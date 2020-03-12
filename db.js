@@ -21,7 +21,7 @@ const sync = async () => {
     CREATE TABLE students(
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
         "studentName" VARCHAR(100) NOT NULL,
-        "schoolId" UUID REFERENCES schools(id),
+        "schoolId" UUID REFERENCES schools(id) ON DELETE CASCADE,
         CHECK(char_length("studentName") > 0)
     );
     `;

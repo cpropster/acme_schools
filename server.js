@@ -42,8 +42,8 @@ app.post("/api/schools", async (req, res, next) => {
 
 app.post("/api/students", async (req, res, next) => {
   try {
-    const { studentName } = req.body;
-    const student = await db.createStudent(studentName);
+    const { studentName, schoolId } = req.body;
+    const student = await db.createStudent(studentName, schoolId);
     res.send(student);
   } catch (error) {
     next(error);
