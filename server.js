@@ -50,14 +50,11 @@ app.post("/api/students", async (req, res, next) => {
   }
 });
 
-app.delete("/api/schools/:id", async (req, res, next) => {
-  try {
-    const { id } = req.params;
-    await db.deleteSchools(id);
-    res.sendStatus(204);
-  } catch (error) {
-    next(error);
-  }
+//figured the .then might fix error handling, didnt work
+app.delete("/api/schools/:id", (req, res, next) => {
+  db.deleteSchools(req.params.id)
+    .then(() => res.sendStatus(204))
+    .catch(next);
 });
 
 app.delete("/api/students/:id", async (req, res, next) => {
@@ -65,9 +62,22 @@ app.delete("/api/students/:id", async (req, res, next) => {
     const { id } = req.params;
     await db.deleteStudents(id);
     res.sendStatus(204);
-  } catch (error) {
-    next(error);
+  } catch (next) {
+    next(next);
   }
+});
+
+app.put("/api/schools/:id", (req, res, next) => {
+  db.updateSchool(req.body)
+    .then((school) => res.send(school))
+    .catch(next);
+});
+
+app.put("/api/students/:id", (req, res, next) => {
+  console.log("im in the server", req.body);
+  db.updateStudent(req.body)
+    .then((student) => res.send(student))
+    .catch(next);
 });
 
 app.use((req, res, next) => {

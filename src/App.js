@@ -3,6 +3,8 @@ import React from "react";
 import StudentForm from "./StudentForm";
 import SchoolForm from "./SchoolForm";
 import Schools from "./Schools";
+import StudentEdit from "./StudentEdit";
+import SchoolEdit from "./SchoolEdit";
 import qs from "qs";
 
 const { useState, useEffect } = React;
@@ -57,13 +59,39 @@ const App = () => {
     try {
       await axios.delete(`/api/schools/${schoolToDelete.id}`);
       setSchools(schools.filter((school) => school.id !== schoolToDelete.id));
+      setError("");
+    } catch (ex) {
+      setError(ex.response.data.message);
+    }
+  };
+
+  const deleteStudent = async (studentToDelete) => {
+    try {
+      await axios.delete(`/api/students/${studentToDelete.id}`);
       setStudents(
-        students.filter((student) => student.schoolId !== schoolToDelete.id)
+        students.filter((student) => student.id !== studentToDelete.id)
       );
       setError("");
     } catch (ex) {
       setError(ex.response.data.message);
     }
+  };
+
+  const updateSchool = async (school) => {
+    const updated = (await axios.put(`/api/schools/${school.id}`, school)).data;
+    setSchools(
+      schools.map((sch) => {
+        return sch.id === updated.id ? updated : sch;
+      })
+    );
+  };
+
+  const updateStudent = async (student) => {
+    const updated = (await axios.put(`/api/students/${student.id}`, student))
+      .data;
+    setStudents(
+      students.map((stud) => (stud.id === updated.id ? updated : stud))
+    );
   };
 
   return (
@@ -79,6 +107,21 @@ const App = () => {
           </li>
         </ul>
       </h1>
+      {view === "student" && (
+        <StudentEdit
+          student={students.find((student) => student.id === params.id)}
+          updateStudent={updateStudent}
+          schools={schools}
+          deleteStudent={deleteStudent}
+        />
+      )}
+      {view === "school" && (
+        <SchoolEdit
+          school={schools.find((school) => school.id === params.id)}
+          updateSchool={updateSchool}
+          deleteSchool={deleteSchool}
+        />
+      )}
       {!view && (
         <div>
           <SchoolForm createSchool={createSchool} />
@@ -86,7 +129,9 @@ const App = () => {
           <Schools
             schools={schools}
             students={students}
-            deleteSchools={deleteSchool}
+            student={students.find((student) => student.id === params.id)}
+            updateStudent={updateStudent}
+            // deleteStudent={deleteStudent}
           />
         </div>
       )}

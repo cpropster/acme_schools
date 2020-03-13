@@ -14,14 +14,14 @@ const sync = async () => {
     
     CREATE TABLE schools(
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-        "schoolName" VARCHAR(100) NOT NULL,
+        "schoolName" VARCHAR(100) UNIQUE NOT NULL,
         CHECK(char_length("schoolName") > 0)
     );
 
     CREATE TABLE students(
         id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-        "studentName" VARCHAR(100) NOT NULL,
-        "schoolId" UUID REFERENCES schools(id) ON DELETE CASCADE,
+        "studentName" VARCHAR(100) UNIQUE NOT NULL,
+        "schoolId" UUID REFERENCES schools(id) ON DELETE RESTRICT,
         CHECK(char_length("studentName") > 0)
     );
     `;
@@ -70,10 +70,22 @@ const deleteSchools = async (schoolId) => {
 
 const deleteStudents = async (studentId) => {
   const SQL = `
-      DELETE FROM schools WHERE id = $1 RETURNING *;
+      DELETE FROM students WHERE id = $1 RETURNING *;
       `;
 
   await client.query(SQL, [studentId]);
+};
+
+const updateSchool = async ({ schoolName, id }) => {
+  const SQL = 'UPDATE schools SET "schoolName" = $1 WHERE id = $2 returning *';
+  return (await client.query(SQL, [schoolName, id])).rows[0];
+};
+
+const updateStudent = async ({ id, studentName, schoolId }) => {
+  const SQL =
+    'UPDATE students SET "schoolId" = $1, "studentName" = $2 WHERE id = $3 returning *';
+  return (await client.query(SQL, [schoolId, studentName, id])).rows[0];
+  //order matters
 };
 
 module.exports = {
@@ -83,5 +95,7 @@ module.exports = {
   readStudents,
   deleteSchools,
   deleteStudents,
+  updateSchool,
+  updateStudent,
   sync,
 };
