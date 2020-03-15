@@ -62,8 +62,8 @@ app.delete("/api/students/:id", async (req, res, next) => {
     const { id } = req.params;
     await db.deleteStudents(id);
     res.sendStatus(204);
-  } catch (next) {
-    next(next);
+  } catch (error) {
+    next(error);
   }
 });
 
@@ -74,7 +74,13 @@ app.put("/api/schools/:id", (req, res, next) => {
 });
 
 app.put("/api/students/:id", (req, res, next) => {
-  console.log("im in the server", req.body);
+  debugger;
+  db.updateStudent(req.body)
+    .then((student) => res.send(student))
+    .catch(next);
+});
+
+app.put("/api/students", (req, res, next) => {
   db.updateStudent(req.body)
     .then((student) => res.send(student))
     .catch(next);

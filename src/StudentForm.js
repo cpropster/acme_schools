@@ -23,7 +23,7 @@ const StudentForm = ({ createStudent, schools }) => {
           value={schoolId}
           onChange={(ev) => setSchoolId(ev.target.value)}
         >
-          <option value="">~~choose school~~</option>
+          <option value="">--choose a school--</option>
           {schools.map((school) => {
             return (
               <option value={school.id} key={school.id}>

@@ -28,6 +28,7 @@ const sync = async () => {
 
   await client.query(SQL);
 
+  const unenrolled = await createSchool("UnEnrolled");
   const UCSB = await createSchool("UCSB");
   const NYU = await createSchool("NYU");
   const hoffy = await createStudent("Hoffy Dobkins", UCSB.id);
@@ -82,6 +83,7 @@ const updateSchool = async ({ schoolName, id }) => {
 };
 
 const updateStudent = async ({ id, studentName, schoolId }) => {
+  debugger;
   const SQL =
     'UPDATE students SET "schoolId" = $1, "studentName" = $2 WHERE id = $3 returning *';
   return (await client.query(SQL, [schoolId, studentName, id])).rows[0];

@@ -33,11 +33,11 @@ const StudentEdit = ({ updateStudent, student, schools, deleteStudent }) => {
         />
         <select
           value={schoolId}
-          onChange={(ev) => setSchoolId(ev.target.value)}
+          onChange={(ev) => {
+            return setSchoolId(ev.target.value);
+          }}
         >
-          <option value="00000000-0000-0000-0000-000000000000">
-            -- Choose School --
-          </option>
+          <option value="">--choose a school--</option>
           {schools.map((school) => {
             return (
               <option value={school.id} key={school.id}>

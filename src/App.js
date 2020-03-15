@@ -3,6 +3,7 @@ import React from "react";
 import StudentForm from "./StudentForm";
 import SchoolForm from "./SchoolForm";
 import Schools from "./Schools";
+import UnenrolledStudents from "./UnenrolledStudents";
 import StudentEdit from "./StudentEdit";
 import SchoolEdit from "./SchoolEdit";
 import qs from "qs";
@@ -13,7 +14,6 @@ const App = () => {
   const [error, setError] = useState("");
   const [schools, setSchools] = useState([]);
   const [students, setStudents] = useState([]);
-  //   const [enrollCount, setEnrollCount] = useState("");
   const [params, setParams] = useState(qs.parse(window.location.hash.slice(1)));
 
   useEffect(() => {
@@ -90,7 +90,7 @@ const App = () => {
     const updated = (await axios.put(`/api/students/${student.id}`, student))
       .data;
     setStudents(
-      students.map((stud) => (stud.id === updated.id ? updated : stud))
+      students.map((student) => (student.id === updated.id ? updated : student))
     );
   };
 
@@ -100,7 +100,7 @@ const App = () => {
         <a href="#">ACME SCHOOLS</a>
         <ul>
           <li>
-            {schools.length} {schools.length === 1 ? "School" : "Schools"}
+            {schools.length - 1} {schools.length === 1 ? "School" : "Schools"}
           </li>
           <li>
             {students.length} {students.length === 1 ? "Student" : "Students"}
@@ -126,6 +126,7 @@ const App = () => {
         <div>
           <SchoolForm createSchool={createSchool} />
           <StudentForm createStudent={createStudent} schools={schools} />
+          <UnenrolledStudents schools={schools} students={students} />
           <Schools
             schools={schools}
             students={students}
